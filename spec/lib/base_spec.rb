@@ -70,10 +70,9 @@ describe PlainOldModel::Base do
     it "should create a new instance and assign_attributes to the associated class" do
       @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia", :desc => {:this => "is a test", :actual_desc => "is another test"}}}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
       @address.country.continent.class.should == Continent
-      @address.country.assign_attributes({:code => "In", :name => "India", :continent => {:name => "asiaaa", :desc => {:this => "is a testaa", :actual_desc => "is another testaaa"}}})
-      puts @address.country.inspect
+      @address.country.continent.name.should == "asia"
       @continent = @address.country.continent
-      puts @continent.inspect
+      @continent.name.should == "asia"
     end
   end
   describe "usage of activemodel classes " do
