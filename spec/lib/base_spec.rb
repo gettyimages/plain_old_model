@@ -18,9 +18,10 @@ describe PlainOldModel::Base do
       @address.attributes.should == [:fname, :lname, :country, :read_test, :write_test, :me]
     end
     it "should accept the params and new up a class with variables initialized" do
-      @person= Person.new({:fname => "first value", :lname => "second value"})
+      @person= Person.new({:fname => "first value", :lname => "second value", :address => {:fname => 'fname', :lname => 'lname'}})
       @person.fname.should == "first value"
       @person.lname.should == "second value"
+      @person.address.should == {:fname => 'fname', :lname => 'lname'}
     end
     it "should not assign value to the attr_reader attributes/ read only attribute" do
       @address = Address.new

@@ -43,7 +43,7 @@ module PlainOldModel
     end
 
     def initialize(attributes = nil, options = {})
-      options = options[:new_record]= true
+      options[:new_record]= true
       assign_attributes(attributes, options) if attributes
     end
 
