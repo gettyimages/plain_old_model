@@ -18,7 +18,6 @@ module PlainOldModel
     include ActiveModel::Serializers::JSON
     include ActiveModel::MassAssignmentSecurity
 
-    # refactor this later to single method to gather all attributes
     def self.attr_accessor(*attrs)
       gather_attributes(attrs)
       super(*attrs)
@@ -43,36 +42,41 @@ module PlainOldModel
     end
 
     def initialize(attributes = nil, options = {})
-      options[:new_record]= true
       assign_attributes(attributes, options) if attributes
     end
 
-    #creation attributes ->create the class referred , and assign the variables
-
-    def self.associated_class(klass, options={})
-      @association = {}
+    def self.has_one(klass, options={})
       if options[:class_name]
-        @association[klass] = options[:class_name].to_s.capitalize unless options[:class_name].nil?
+        association[klass] = options[:class_name].to_s.capitalize unless options[:class_name].nil?
       else
-        @association[klass] = klass.to_s.capitalize
+        association[klass] = klass.to_s.capitalize
       end
-      @association
     end
 
     def self.association
-      @association
+      @association ||= {}
     end
 
     def assign_attributes(new_attributes, options = {})
       return unless new_attributes
+      association.each do |k,v|
+        if new_attributes.include?(k)
+          new_klass = k.to_s.capitalize.constantize.new(new_attributes[k])
+          send("#{k}=", new_klass)
+          new_attributes = new_attributes.delete_if {|key, value| key == k }
+        end
+      end
+      assignment(new_attributes, options)
+    end
 
-      attributes = sanitize_attributes(new_attributes).stringify_keys
+    def assignment(attributes, options)
+      attributes = sanitize_attributes(attributes).stringify_keys
       multi_parameter_attributes = []
       @mass_assignment_options = options
 
       attributes.each do |k, v|
         if k.include?("(")
-          multi_parameter_attributes << [ k, v ]
+          multi_parameter_attributes << [k, v]
         elsif respond_to?("#{k}=")
           send("#{k}=", v)
         else
@@ -97,6 +101,10 @@ module PlainOldModel
 
     def attributes
       self.class.attributes
+    end
+
+    def association
+      self.class.association
     end
 
     def mass_assignment_options

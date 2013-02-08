@@ -6,7 +6,7 @@ class Person < PlainOldModel::Base
   attr_reader :test
   attr_writer :testmewriter
 
-  associated_class :book, :class_name => :book
+  has_one :book, :class_name => :book
 
   validates_presence_of :name ,:message => "The field is a required field"
 end
