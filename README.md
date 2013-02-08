@@ -20,14 +20,14 @@ Or install it yourself as:
 Example
 =======
 
-class Person < Activeservice::Base
-   attr_accessor :name, :age, :book
+ class Person < PlainOldModel::Base
+    attr_accessor :name, :age, :book
 
-   attr_reader :account_number
-   attr_writer :address
+    attr_reader :account_number
+    attr_writer :address
 
-   validates_presence_of :book
-end
+    validates_presence_of :book
+ end
 
  params = {"name" =>"testmeparams", "age" => "25", "book" =>["wewrwrwr", "werwrwrr"]}
 
