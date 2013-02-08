@@ -33,14 +33,17 @@ end
 
  params1 = {:name =>"testmeparams", :age => "25", :book => {:author =>"my name", :category => "fiction"}}
 
-  p = Person.new(params)
-  p.book  # ["wewrwrwr", "werwrwrr"]
+p = Person.new(params)
+  
+p.book  # ["wewrwrwr", "werwrwrr"]
 
-  p.valid? #true
+p.valid? #true
 
   OR
-  p = Person.new()
-  p.assign_attributes(params11)
+  
+p = Person.new()
+
+p.assign_attributes(params11)
 
 =====================================================================
   p1 = Person.new(params1)
