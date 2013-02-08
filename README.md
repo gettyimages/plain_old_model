@@ -17,8 +17,42 @@ Or install it yourself as:
     $ gem install plain_old_model
 
 ## Usage
+Example
+=======
 
-TODO: Write usage instructions here
+class Person < Activeservice::Base
+  attr_accessor :name, :age, :book
+
+  attr_reader :account_number
+  attr_writer :address
+
+  validates_presence_of :book
+end
+
+params = {"name" =>"testmeparams", "age" => "25", "book" =>["wewrwrwr", "werwrwrr"]}
+
+params1 = {:name =>"testmeparams", :age => "25", :book => {:author =>"my name", :category => "fiction"}}
+
+  p = Person.new(params)
+  p.book  # ["wewrwrwr", "werwrwrr"]
+
+  p.valid? #true
+
+  OR
+  p.assign_attributes(params11)
+
+  p1 = Person.new(params1)
+
+  p1.book # {:author =>"my name", :category => "fiction"}
+
+  p.attributes #[:name, :age, :book, :account_number, :address]
+
+
+TODO:
+
+* Association(s)
+* mass assignments
+*
 
 ## Contributing
 
