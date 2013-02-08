@@ -21,17 +21,17 @@ Example
 =======
 
 class Person < Activeservice::Base
-  attr_accessor :name, :age, :book
+   attr_accessor :name, :age, :book
 
-  attr_reader :account_number
-  attr_writer :address
+   attr_reader :account_number
+   attr_writer :address
 
-  validates_presence_of :book
+   validates_presence_of :book
 end
 
-params = {"name" =>"testmeparams", "age" => "25", "book" =>["wewrwrwr", "werwrwrr"]}
+ params = {"name" =>"testmeparams", "age" => "25", "book" =>["wewrwrwr", "werwrwrr"]}
 
-params1 = {:name =>"testmeparams", :age => "25", :book => {:author =>"my name", :category => "fiction"}}
+ params1 = {:name =>"testmeparams", :age => "25", :book => {:author =>"my name", :category => "fiction"}}
 
   p = Person.new(params)
   p.book  # ["wewrwrwr", "werwrwrr"]
@@ -39,8 +39,10 @@ params1 = {:name =>"testmeparams", :age => "25", :book => {:author =>"my name", 
   p.valid? #true
 
   OR
+  p = Person.new()
   p.assign_attributes(params11)
 
+=====================================================================
   p1 = Person.new(params1)
 
   p1.book # {:author =>"my name", :category => "fiction"}
