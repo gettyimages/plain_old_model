@@ -18,39 +18,17 @@ module PlainOldModel
     include ActiveModel::Serializers::JSON
     include ActiveModel::MassAssignmentSecurity
 
-    def self.attr_accessor(*attrs)
-      gather_attributes(attrs)
-      super(*attrs)
-    end
-
-    def self.attr_writer(*attrs)
-      gather_attributes(attrs)
-      super(*attrs)
-    end
-
-    def self.attr_reader(*attrs)
-      gather_attributes(attrs)
-      super(*attrs)
-    end
-
-    def self.attributes
-      @attributes ||= []
-    end
-
-    def self.gather_attributes(attrs)
-      attributes.concat attrs
-    end
-
     def initialize(attributes = nil, options = {})
       assign_attributes(attributes, options) if attributes
     end
 
-    def self.has_one(klass, options={})
+    def self.has_one(attr_name, options={})
       if options[:class_name]
-        association[klass] = options[:class_name].to_s.capitalize unless options[:class_name].nil?
+        association[attr_name] = options[:class_name].to_s.capitalize unless options[:class_name].nil?
       else
-        association[klass] = klass.to_s.capitalize
+        association[attr_name] = attr_name.to_s.capitalize
       end
+     attr_accessor attr_name
     end
 
     def self.association
@@ -62,7 +40,8 @@ module PlainOldModel
       association.each do |k,v|
         if new_attributes.include?(k)
           new_klass = k.to_s.camelcase.constantize.new(new_attributes[k])
-          send("#{k}=", new_klass)
+
+          respond_to?("#{k}=") ? (send("#{k}=", new_klass)) : (instance_variable_set("@#{k}".to_sym,new_klass))
           new_attributes = new_attributes.delete_if {|key, value| key == k }
         end
       end
@@ -79,6 +58,8 @@ module PlainOldModel
           multi_parameter_attributes << [k, v]
         elsif respond_to?("#{k}=")
           send("#{k}=", v)
+        elsif respond_to?("#{k}")
+          instance_variable_set("@#{k}".to_sym,v)
         else
           raise(Exception)
         end
@@ -88,7 +69,7 @@ module PlainOldModel
     def sanitize_attributes(attributes)
       sanitized_attributes = {}
       attributes.each do |k,v|
-        if respond_to?("#{k}=")
+        if respond_to?("#{k}=") || respond_to?("#{k}")
           sanitized_attributes[k]=v
         end
       end
@@ -97,10 +78,6 @@ module PlainOldModel
 
     def persisted?
       false
-    end
-
-    def attributes
-      self.class.attributes
     end
 
     def association

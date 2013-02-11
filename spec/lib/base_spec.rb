@@ -10,23 +10,16 @@ describe PlainOldModel::Base do
   end
 
   describe " assign_attribute and new" do
-    it "should return all the attributes of the class instance even if they are not initialized" do
-      @person = Person.new
-      @person.attributes.count.should == 3
-      @person.attributes.should == [:fname, :lname, :address]
-      @address = Address.new
-      @address.attributes.should == [:fname, :lname, :country, :read_test, :write_test]
-    end
     it "should accept the params and new up a class with variables initialized" do
       @person= Person.new({:fname => "first value", :lname => "second value", :address => {:fname => 'fname', :lname => 'lname'}})
       @person.fname.should == "first value"
       @person.lname.should == "second value"
       @person.address.should == {:fname => 'fname', :lname => 'lname'}
     end
-    it "should not assign value to the attr_reader attributes/ read only attribute" do
+    it "should assign value to the attr_reader attributes/ read only attribute" do
       @address = Address.new
-      @address.assign_attributes({:fname => "first value", :lname => "second value", :read_test => 'This should not be assigned'})
-      @address.read_test.should == nil
+      @address.assign_attributes({:fname => "first value", :lname => "second value", :read_test => 'This should be assigned'})
+      @address.read_test.should == "This should be assigned"
     end
     it "should assign value to the attr_writer attributes" do
       @address = Address.new
@@ -74,6 +67,10 @@ describe PlainOldModel::Base do
       @continent = @address.country.continent
       @continent.name.should == "asia"
     end
+    it "should assign values to the read only attributes" do
+      @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
+      @address.read_test.should == "This should be assigned"
+    end
   end
   describe "usage of activemodel classes " do
     #it "should allow model's naming properties" do
@@ -93,7 +90,7 @@ class Person < PlainOldModel::Base
 end
 
 class Address < PlainOldModel::Base
-  attr_accessor :fname, :lname, :country
+  attr_accessor :fname, :lname
   attr_reader :read_test
   attr_writer :write_test
 
@@ -102,7 +99,7 @@ class Address < PlainOldModel::Base
 end
 
 class Country < PlainOldModel::Base
-  attr_accessor :code, :name, :continent
+  attr_accessor :code, :name
 
   has_one :continent
 end
