@@ -36,14 +36,14 @@ describe PlainOldModel::Base do
     end
   end
 
-  describe "association" do
+  describe "associations" do
     it "should return empty hash for unassociated class" do
       @person = Person.new()
-      @person.association.should == {}
+      @person.associations.should == {}
     end
     it "should provide all the associations when the class has associations" do
       @address = Address.new()
-      @address.association.should == {:country => "Country"}
+      @address.associations.should == {:country => "Country"}
     end
     it "should create a new instance and assign_attributes to the associated class" do
       @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
@@ -65,13 +65,7 @@ describe PlainOldModel::Base do
       @address.read_test.should == "This should be assigned"
     end
   end
-  describe "usage of activemodel classes " do
-    #it "should allow model's naming properties" do
-    #  @address = Address.new
-    #  Address.model_name.should == "Address"
-    #  @address.to_model.should == @addess
-    #end
-  end
+
 
 end
 
