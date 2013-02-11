@@ -61,7 +61,7 @@ module PlainOldModel
       return unless new_attributes
       association.each do |k,v|
         if new_attributes.include?(k)
-          new_klass = k.to_s.capitalize.constantize.new(new_attributes[k])
+          new_klass = k.to_s.camelcase.constantize.new(new_attributes[k])
           send("#{k}=", new_klass)
           new_attributes = new_attributes.delete_if {|key, value| key == k }
         end

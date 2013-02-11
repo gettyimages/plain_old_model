@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.name          = "plain_old_model"
   gem.version       = PlainOldModel::VERSION
   gem.authors       = ["Bhaskar Sundarraj", "Getty Images"]
-  gem.email         = ["bhaskar.sundarraj@gettyimages.com" ,"AppDev_RailGun@gettyimages.com"]
+  gem.email         = ["bhaskar.sundarraj@gmail.com""bhaskar.sundarraj@gettyimages.com" ,"AppDev_RailGun@gettyimages.com"]
   gem.description   = %q{This gem is created to cater the projects which do not require a backend/database,
   but still need some of the niceties offered by the ActiveRecord}
   gem.summary       = %q{This gem is created to cater the projects which do not require a backend/database,

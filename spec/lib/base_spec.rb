@@ -5,7 +5,7 @@ describe PlainOldModel::Base do
 
   describe "gem version" do
     it "should return the current version of the gem" do
-      PlainOldModel::VERSION.should == '0.0.1'
+      PlainOldModel::VERSION.should == '0.0.4'
     end
   end
 
