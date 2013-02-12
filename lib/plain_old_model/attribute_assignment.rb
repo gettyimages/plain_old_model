@@ -59,14 +59,14 @@ module PlainOldModel
 
       def klass
         if @options[:class_name]
-          @options[:class_name].to_s.capitalize.constantize
+          @options[:class_name].to_s.camelcase.constantize
         else
           klass_from_attr_name
         end
       end
 
       def klass_from_attr_name
-        @attr_name.to_s.capitalize.constantize
+        @attr_name.to_s.camelcase.constantize
       end
     end
 
@@ -80,7 +80,7 @@ module PlainOldModel
       end
 
       def klass_from_attr_name
-        @attr_name.to_s.singularize.capitalize.constantize
+        @attr_name.to_s.singularize.camelcase.constantize
       end
     end
 

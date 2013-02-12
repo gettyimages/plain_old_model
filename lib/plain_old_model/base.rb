@@ -12,7 +12,7 @@ module PlainOldModel
     include ActiveModel::Conversion
     include PlainOldModel::AttributeAssignment
 
-    def initialize(attributes = nil, options = {})
+    def initialize(attributes = {}, options = {})
       assign_attributes(attributes, options) if attributes
     end
 
