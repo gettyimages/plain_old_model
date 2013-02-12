@@ -37,43 +37,74 @@ describe PlainOldModel::Base do
   end
 
   describe "associations" do
-    it "should return empty hash for unassociated class" do
-      @person = Person.new()
-      @person.associations.should == {}
+    it "should return empty array for unassociated class" do
+      @person = Continent.new
+      @person.associations.should == []
     end
     it "should provide all the associations when the class has associations" do
-      @address = Address.new()
-      @address.associations.should == {:country => "Country"}
+      @address = Address.new
+      @address.associations.length.should == 1
+      @address.associations.first.attr_name.should == :country
     end
-    it "should create a new instance and assign_attributes to the associated class" do
-      @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
-      @address.country.class.should == Country
+    describe "has_one" do
+      it "should create a new instance and assign_attributes to the associated class" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
+        @address.country.class.should == Country
+      end
+      it "should create the nested class instance and assign_attributes to the associated nested class" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia"}}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
+        @address.country.continent.class.should == Continent
+      end
+      it "should create a new instance and assign_attributes to the associated class" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia", :desc => {:this => "is a test", :actual_desc => "is another test"}}}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
+        @address.country.continent.class.should == Continent
+        @address.country.continent.name.should == "asia"
+        @continent = @address.country.continent
+        @continent.name.should == "asia"
+      end
+      it "should assign values to the read only attributes" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.read_test.should == "This should be assigned"
+      end
     end
-    it "should create the nested class instance and assign_attributes to the associated nested class" do
-      @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia"}}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
-      @address.country.continent.class.should == Continent
-    end
-    it "should create a new instance and assign_attributes to the associated class" do
-      @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia", :desc => {:this => "is a test", :actual_desc => "is another test"}}}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
-      @address.country.continent.class.should == Continent
-      @address.country.continent.name.should == "asia"
-      @continent = @address.country.continent
-      @continent.name.should == "asia"
-    end
-    it "should assign values to the read only attributes" do
-      @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
-      @address.read_test.should == "This should be assigned"
+    describe "has_many" do
+      it "should create a new instance and assign attributes for each value in array" do
+        @person = Person.new({ addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]})
+        @person.addresses.length.should == 2
+        @person.addresses.first.class.should == Address
+        @person.addresses.first.fname.should == "first name 1"
+        @person.addresses.first.lname.should == "last name 1"
+        @person.addresses[1].class.should == Address
+        @person.addresses[1].fname.should == "first name 2"
+        @person.addresses[1].lname.should == "last name 2"
+      end
+
+      it "should create each class via factory_method if one is specified" do
+        @person = Person.new({ phones: [{ number: '423-5841'}, {number: '383-9139'}]})
+        @person.phones.length.should == 2
+        @person.phones[0].number.should == '423-5841'
+        @person.phones[0].extension.should == 'set_via_factory'
+        @person.phones[1].extension.should == 'set_via_factory'
+      end
     end
   end
-
-
 end
 
 
 class Person < PlainOldModel::Base
   attr_accessor :fname, :lname, :address
-  #has_one :address
+  has_many :addresses
+  has_many :phones, factory_method: :create
   validates_presence_of :fname
+end
+
+class Phone < PlainOldModel::Base
+  attr_accessor :number, :extension
+
+  def self.create(attributes)
+    attributes[:extension] = 'set_via_factory'
+    new(attributes)
+  end
 end
 
 class Address < PlainOldModel::Base
