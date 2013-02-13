@@ -31,7 +31,7 @@ module PlainOldModel
           value = association.create_value_from_attributes(new_attributes[attr_name])
 
           set_attribute(attr_name, value)
-          new_attributes = new_attributes.delete_if { |key, value| key == attr_name }
+          new_attributes  = new_attributes.delete_if { |key, value| key.to_s == attr_name.to_s }
         end
       end
       assign_simple_attributes(new_attributes, options)
