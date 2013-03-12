@@ -25,16 +25,17 @@ module PlainOldModel
 
     def assign_attributes(new_attributes, options = {})
       return unless new_attributes
+      attributes = new_attributes.dup
+
       associations.each do |association|
         attr_name = association.attr_name
-        if new_attributes.include?(attr_name)
-          value = association.create_value_from_attributes(new_attributes[attr_name])
-
+        if attributes.include?(attr_name)
+          value = association.create_value_from_attributes(attributes[attr_name])
           set_attribute(attr_name, value)
-          new_attributes  = new_attributes.delete_if { |key, value| key.to_s == attr_name.to_s }
+          attributes  = attributes.delete_if { |key, value| key.to_s == attr_name.to_s }
         end
       end
-      assign_simple_attributes(new_attributes, options)
+      assign_simple_attributes(attributes, options)
     end
 
     def associations

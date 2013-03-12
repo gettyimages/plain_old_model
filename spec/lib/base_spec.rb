@@ -79,6 +79,15 @@ describe PlainOldModel::Base do
         @person.addresses[1].lname.should == "last name 2"
       end
 
+      it "should not alter the params passed in" do
+        passed_params = { addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]}
+        @person = Person.new(passed_params)
+        @person.addresses.length.should == 2
+        @person.addresses.first.class.should == Address
+        @person.addresses.first.fname.should == "first name 1"
+        passed_params.should == { addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]}
+      end
+
       it "should create each class via factory_method if one is specified" do
         @person = Person.new({ phones: [{ number: '423-5841'}, {number: '383-9139'}]})
         @person.phones.length.should == 2
