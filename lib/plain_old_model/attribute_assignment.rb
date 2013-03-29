@@ -30,6 +30,21 @@ module PlainOldModel
       associations.each do |association|
         attr_name = association.attr_name
         if attributes.include?(attr_name)
+          value = association.create_value_from_attributes(attributes[attr_name])
+          set_attribute(attr_name, value)
+          attributes  = attributes.delete_if { |key, value| key.to_s == attr_name.to_s }
+        end
+      end
+      assign_simple_attributes(attributes, options)
+    end
+
+    def update_attributes(new_attributes, options = {})
+      return unless new_attributes
+      attributes = new_attributes.dup
+
+      associations.each do |association|
+        attr_name = association.attr_name
+        if attributes.include?(attr_name)
           value = merge_association_with_attributes(association, attr_name, attributes)
           set_attribute(attr_name, value)
           attributes  = attributes.delete_if { |key, value| key.to_s == attr_name.to_s }

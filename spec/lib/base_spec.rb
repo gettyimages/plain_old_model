@@ -86,7 +86,7 @@ describe PlainOldModel::Base do
       end
       it "should not wipe out existing values" do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
-        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States"}})
+        @address.update_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States"}})
         @address.fname.should == "replaced first value"
         @address.country.code.should == "In"
         @address.country.name.should == "United States"
