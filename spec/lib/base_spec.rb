@@ -11,7 +11,9 @@ describe PlainOldModel::Base do
     end
     it "should assign value to the attr_reader attributes/ read only attribute" do
       @address = Address.new
-      @address.assign_attributes({:fname => "first value", :lname => "second value", :read_test => 'This should be assigned'})
+      @address.fname = "first value"
+      @address.assign_attributes({:lname => "second value", :read_test => 'This should be assigned'})
+      @address.fname.should == "first value"
       @address.read_test.should == "This should be assigned"
     end
     it "should assign value to the attr_writer attributes" do
@@ -66,7 +68,40 @@ describe PlainOldModel::Base do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
         @address.read_test.should == "This should be assigned"
       end
+      it "should override existing values" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:code => "USA", :name => "United States"}})
+        @address.fname.should == "replaced first value"
+        @address.country.code.should == "USA"
+        @address.country.name.should == "United States"
+        @address.read_test.should == "This should be assigned"
+      end
+      it "should not wipe out existing values" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value"})
+        @address.fname.should == "replaced first value"
+        @address.country.code.should == "In"
+        @address.country.name.should == "India"
+        @address.read_test.should == "This should be assigned"
+      end
+      it "should not wipe out existing values" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States"}})
+        @address.fname.should == "replaced first value"
+        @address.country.code.should == "In"
+        @address.country.name.should == "United States"
+        @address.read_test.should == "This should be assigned"
+      end
+      it "should create missing children" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:code => "In", :name => "India"} })
+        @address.fname.should == "replaced first value"
+        @address.country.code.should == "In"
+        @address.country.name.should == "India"
+        @address.read_test.should == "This should be assigned"
+      end
     end
+
     describe "has_many" do
       it "should create a new instance and assign attributes for each value in array" do
         @person = Person.new({ addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]})
@@ -95,6 +130,14 @@ describe PlainOldModel::Base do
         @person.phones[0].extension.should == 'set_via_factory'
         @person.phones[1].extension.should == 'set_via_factory'
       end
+
+      # TODO Need to complete this later
+      #it "should not wipe out existing values" do
+      #  @person = Person.new({ addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]})
+      #  @person.assign_attributes({ addresses: [{ fname: "first name 1"}, { fname: "first name 2", lname: "last name 2"}]})
+      #  @person.addresses.first.lname.should == "last name 1"
+      #  @person.addresses.last.lname.should == "last name 2"
+      #end
     end
   end
 end
