@@ -85,11 +85,12 @@ describe PlainOldModel::Base do
         @address.read_test.should == "This should be assigned"
       end
       it "should not override unassigned nested attributes' values" do
-        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
-        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States"}})
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia", :desc => {:this => "is a test", :actual_desc => "is another test"}}}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States", :continent => {:desc => {:this => "is a replacement", :actual_desc => "is another replacement"}}}})
         @address.fname.should == "replaced first value"
         @address.country.code.should == "In"
         @address.country.name.should == "United States"
+        @address.country.continent.name.should == "asia"
         @address.read_test.should == "This should be assigned"
       end
       it "should create assigned nested attributes" do
