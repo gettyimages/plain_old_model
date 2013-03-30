@@ -39,7 +39,7 @@ module PlainOldModel
     end
 
     def merge_association_with_attributes(association, attr_name, attributes)
-      association_instance = self.send(attr_name)
+      association_instance = send(attr_name)
       association_instance_hash = {}
       if association.class == HasOneAssociation
         association_instance.instance_variables.each { |var| association_instance_hash[var.to_s.delete("@")] = association_instance.instance_variable_get(var) } unless association_instance.nil?
