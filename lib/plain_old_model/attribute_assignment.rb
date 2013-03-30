@@ -30,7 +30,7 @@ module PlainOldModel
       associations.each do |association|
         attr_name = association.attr_name
         if attributes.include?(attr_name)
-          value = merge_association_with_attributes(association, attr_name, attributes)
+          value = merge_association_instance_variables_with_attributes(association, attr_name, attributes)
           set_attribute(attr_name, value)
           attributes  = attributes.delete_if { |key, value| key.to_s == attr_name.to_s }
         end
@@ -38,7 +38,7 @@ module PlainOldModel
       assign_simple_attributes(attributes, options)
     end
 
-    def merge_association_with_attributes(association, attr_name, attributes)
+    def merge_association_instance_variables_with_attributes(association, attr_name, attributes)
       association_instance = send(attr_name)
       association_instance_hash = {}
       if association.class == HasOneAssociation
@@ -52,9 +52,7 @@ module PlainOldModel
         else
           for i in 0..association_instance.length-1
             association_instance_hash = {}
-            association_instance[i].instance_variables.each do |var|
-              association_instance_hash[var.to_s.delete("@").to_sym] = association_instance[i].instance_variable_get(var)
-            end
+            association_instance[i].instance_variables.each { |var| association_instance_hash[var.to_s.delete("@")] = association_instance[i].instance_variable_get(var) }
             association_instance_array << association_instance_hash.merge(attributes[attr_name][i])
           end
           value = association.create_value_from_attributes(association_instance_array)
