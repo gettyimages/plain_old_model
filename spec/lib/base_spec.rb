@@ -128,14 +128,6 @@ describe PlainOldModel::Base do
         @person.phones[0].extension.should == 'set_via_factory'
         @person.phones[1].extension.should == 'set_via_factory'
       end
-
-      # TODO Need to make the following test pass for has many association
-      #it "should not wipe out existing values" do
-      #  @person = Person.new({ addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]})
-      #  @person.assign_attributes({ addresses: [{ fname: "first name 1"}, { fname: "first name 2", lname: "last name 2"}]})
-      #  @person.addresses.first.lname.should == "last name 1"
-      #  @person.addresses.last.lname.should == "last name 2"
-      #end
     end
   end
 end
