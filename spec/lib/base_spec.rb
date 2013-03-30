@@ -68,7 +68,7 @@ describe PlainOldModel::Base do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
         @address.read_test.should == "This should be assigned"
       end
-      it "should override existing values" do
+      it "should override assigned attributes" do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
         @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:code => "USA", :name => "United States"}})
         @address.fname.should == "replaced first value"
@@ -76,7 +76,7 @@ describe PlainOldModel::Base do
         @address.country.name.should == "United States"
         @address.read_test.should == "This should be assigned"
       end
-      it "should not wipe out existing values" do
+      it "should not override unassigned nested attributes" do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
         @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value"})
         @address.fname.should == "replaced first value"
@@ -84,15 +84,15 @@ describe PlainOldModel::Base do
         @address.country.name.should == "India"
         @address.read_test.should == "This should be assigned"
       end
-      it "should not wipe out existing values" do
+      it "should not override unassigned nested attributes' values" do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
-        @address.update_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States"}})
+        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States"}})
         @address.fname.should == "replaced first value"
         @address.country.code.should == "In"
         @address.country.name.should == "United States"
         @address.read_test.should == "This should be assigned"
       end
-      it "should create missing children" do
+      it "should create assigned nested attributes" do
         @address = Address.new({:fname => "first value", :lname => "second value", :read_test => 'This should be assigned',:write_test => "this shd be available"})
         @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:code => "In", :name => "India"} })
         @address.fname.should == "replaced first value"
@@ -113,7 +113,6 @@ describe PlainOldModel::Base do
         @person.addresses[1].fname.should == "first name 2"
         @person.addresses[1].lname.should == "last name 2"
       end
-
       it "should not alter the params passed in" do
         passed_params = { addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]}
         @person = Person.new(passed_params)
@@ -122,7 +121,6 @@ describe PlainOldModel::Base do
         @person.addresses.first.fname.should == "first name 1"
         passed_params.should == { addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]}
       end
-
       it "should create each class via factory_method if one is specified" do
         @person = Person.new({ phones: [{ number: '423-5841'}, {number: '383-9139'}]})
         @person.phones.length.should == 2
@@ -131,7 +129,7 @@ describe PlainOldModel::Base do
         @person.phones[1].extension.should == 'set_via_factory'
       end
 
-      # TODO Need to complete this later
+      # TODO Need to make the following test pass for has many association
       #it "should not wipe out existing values" do
       #  @person = Person.new({ addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]})
       #  @person.assign_attributes({ addresses: [{ fname: "first name 1"}, { fname: "first name 2", lname: "last name 2"}]})
@@ -141,7 +139,6 @@ describe PlainOldModel::Base do
     end
   end
 end
-
 
 class Person < PlainOldModel::Base
   attr_accessor :fname, :lname, :address
