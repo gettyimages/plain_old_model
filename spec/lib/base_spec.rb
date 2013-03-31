@@ -85,11 +85,12 @@ describe PlainOldModel::Base do
         @address.read_test.should == "This should be assigned"
       end
       it "should not override unassigned nested attributes' values" do
-        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
-        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States"}})
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia", :desc => {:this => "is a test", :actual_desc => "is another test"}}}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States", :continent => {:desc => {:this => "is a replacement", :actual_desc => "is another replacement"}}}})
         @address.fname.should == "replaced first value"
         @address.country.code.should == "In"
         @address.country.name.should == "United States"
+        @address.country.continent.name.should == "asia"
         @address.read_test.should == "This should be assigned"
       end
       it "should create assigned nested attributes" do
@@ -128,6 +129,14 @@ describe PlainOldModel::Base do
         @person.phones[0].extension.should == 'set_via_factory'
         @person.phones[1].extension.should == 'set_via_factory'
       end
+      it "should not override unassigned nested attributes' values" do
+        @person = Person.new({ addresses: [{ fname: "first name 1", lname: "last name 1", :country => {:code => "In", :name => "India", :continent => {:name => "asia", :desc => {:this => "is a test", :actual_desc => "is another test"}}}}, { fname: "first name 2", lname: "last name 2"}]})
+        @person.assign_attributes({ addresses: [{ fname: "first name 1", :country => {:name => "United States", :continent => {:desc => {:this => "is a replacement", :actual_desc => "is another replacement"}}}}, { fname: "first name 2", lname: "last name 2"}]})
+        @person.addresses.first.lname.should == "last name 1"
+        @person.addresses.last.lname.should == "last name 2"
+        @person.addresses.first.country.name.should == "United States"
+        @person.addresses.first.country.continent.name.should == "asia"
+      end
     end
   end
 end
@@ -154,7 +163,6 @@ class Address < PlainOldModel::Base
   attr_writer :write_test
 
   has_one :country
-
 end
 
 class Country < PlainOldModel::Base
