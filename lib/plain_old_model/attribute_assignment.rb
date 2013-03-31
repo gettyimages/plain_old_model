@@ -51,7 +51,7 @@ module PlainOldModel
         else
           for i in 0..association_instance.length-1
             association_instance_hash = {}
-            association_instance[i].instance_variables.each { |var| association_instance_hash[var.to_s.delete("@")] = association_instance[i].instance_variable_get(var) }
+            association_instance[i].instance_variables.each { |var| association_instance_hash[var.to_s.delete("@").to_sym] = association_instance[i].instance_variable_get(var) }
             association_instance_array << association_instance_hash.deep_merge(attributes[attr_name][i])
           end
           value = association.create_value_from_attributes(association_instance_array)
