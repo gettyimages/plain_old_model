@@ -130,10 +130,12 @@ describe PlainOldModel::Base do
         @person.phones[1].extension.should == 'set_via_factory'
       end
       it "should not override unassigned nested attributes' values" do
-        @person = Person.new({ addresses: [{ fname: "first name 1", lname: "last name 1"}, { fname: "first name 2", lname: "last name 2"}]})
-        @person.assign_attributes({ addresses: [{ fname: "first name 1"}, { fname: "first name 2", lname: "last name 2"}]})
+        @person = Person.new({ addresses: [{ fname: "first name 1", lname: "last name 1", :country => {:code => "In", :name => "India", :continent => {:name => "asia", :desc => {:this => "is a test", :actual_desc => "is another test"}}}}, { fname: "first name 2", lname: "last name 2"}]})
+        @person.assign_attributes({ addresses: [{ fname: "first name 1", :country => {:name => "United States", :continent => {:desc => {:this => "is a replacement", :actual_desc => "is another replacement"}}}}, { fname: "first name 2", lname: "last name 2"}]})
         @person.addresses.first.lname.should == "last name 1"
         @person.addresses.last.lname.should == "last name 2"
+        @person.addresses.first.country.name.should == "United States"
+        @person.addresses.first.country.continent.name.should == "asia"
       end
     end
   end
