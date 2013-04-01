@@ -30,7 +30,8 @@ module PlainOldModel
       associations.each do |association|
         attr_name = association.attr_name
         if attributes.include?(attr_name)
-          value = merge_association_instance_variables_with_attributes(association, attr_name, attributes)
+          merged_hash = merge_association_instance_variables_with_attributes(association, attr_name, attributes)
+          value = association.create_value_from_attributes(merged_hash)
           set_attribute(attr_name, value)
           attributes  = attributes.delete_if { |key, value| key.to_s == attr_name.to_s }
         end
@@ -41,22 +42,21 @@ module PlainOldModel
     def merge_association_instance_variables_with_attributes(association, attr_name, attributes)
       association_instance = send(attr_name)
       if association.class == HasOneAssociation
-        association_instance_hash = create_association_hash(association_instance,{})
-        association_instance_hash.deep_merge!(attributes[attr_name])
-        value = association.create_value_from_attributes(association_instance_hash)
+        instance_hash = create_association_hash(association_instance,{})
+        merged_result = instance_hash.deep_merge(attributes[attr_name])
       elsif association.class == HasManyAssociation
         association_instance_array = []
         if association_instance.nil?
-          value = association.create_value_from_attributes(attributes[attr_name])
+          merged_result = attributes[attr_name]
         else
           for i in 0..association_instance.length-1
-            association_instance_hash = create_association_hash(association_instance[i],{})
-            association_instance_array << association_instance_hash.deep_merge(attributes[attr_name][i])
+            instance_hash = create_association_hash(association_instance[i],{})
+            association_instance_array << instance_hash.deep_merge(attributes[attr_name][i])
           end
-          value = association.create_value_from_attributes(association_instance_array)
+          merged_result = association_instance_array
         end
       end
-      value
+      merged_result
     end
 
     def create_association_hash(association_instance,association_instance_hash)
