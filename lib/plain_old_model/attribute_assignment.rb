@@ -117,16 +117,16 @@ module PlainOldModel
     def merge_association_instance_variables_with_attributes(association, attr_name, attributes)
       association_instance = send(attr_name)
       if association.class == HasOneAssociation
-        instance_hash = create_association_hash(association_instance,{})
-        merged_result = instance_hash.with_indifferent_access.deep_merge(attributes[attr_name])
+        instance_hash = create_association_hash(association_instance,HashWithIndifferentAccess.new)
+        merged_result = instance_hash.deep_merge(attributes[attr_name])
       elsif association.class == HasManyAssociation
         association_instance_array = []
         if association_instance.nil?
           merged_result = attributes[attr_name]
         else
           for i in 0..association_instance.length-1
-            instance_hash = create_association_hash(association_instance[i],{})
-            association_instance_array << instance_hash.with_indifferent_access.deep_merge(attributes[attr_name][i])
+            instance_hash = create_association_hash(association_instance[i],HashWithIndifferentAccess.new)
+            association_instance_array << instance_hash.deep_merge(attributes[attr_name][i])
           end
           merged_result = association_instance_array
         end
