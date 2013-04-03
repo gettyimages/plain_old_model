@@ -86,7 +86,7 @@ describe PlainOldModel::Base do
       end
       it "should not override unassigned nested attributes' values" do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia", :desc => {:this => "is a test", :actual_desc => "is another test"}}}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
-        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:name => "United States", :continent => {:desc => {:this => "is a replacement", :actual_desc => "is another replacement"}}}})
+        @address.assign_attributes({"fname" => "replaced first value", :lname => "replaced second value", :country => {:name => "United States", :continent => {:desc => {:this => "is a replacement", :actual_desc => "is another replacement"}}}})
         @address.fname.should == "replaced first value"
         @address.country.code.should == "In"
         @address.country.name.should == "United States"
@@ -94,8 +94,16 @@ describe PlainOldModel::Base do
         @address.read_test.should == "This should be assigned"
       end
       it "should create assigned nested attributes" do
-        @address = Address.new({:fname => "first value", :lname => "second value", :read_test => 'This should be assigned',:write_test => "this shd be available"})
-        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {:code => "In", :name => "India"} })
+        @address = Address.new({:lname => "second value", :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.assign_attributes({"fname" => "first value", :lname => "replaced second value", :country => {:code => "In", :name => "India"} })
+        @address.fname.should == "first value"
+        @address.country.code.should == "In"
+        @address.country.name.should == "India"
+        @address.read_test.should == "This should be assigned"
+      end
+      it "should assigned nested attributes with mixed string and symbol hash keys" do
+        @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "", :name => ""}, :read_test => 'This should be assigned',:write_test => "this shd be available"})
+        @address.assign_attributes({:fname => "replaced first value", :lname => "replaced second value", :country => {"code" => "In", "name" => "India"} })
         @address.fname.should == "replaced first value"
         @address.country.code.should == "In"
         @address.country.name.should == "India"

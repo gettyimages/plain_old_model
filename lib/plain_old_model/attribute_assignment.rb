@@ -118,7 +118,7 @@ module PlainOldModel
       association_instance = send(attr_name)
       if association.class == HasOneAssociation
         instance_hash = create_association_hash(association_instance,{})
-        merged_result = instance_hash.deep_merge(attributes[attr_name])
+        merged_result = instance_hash.with_indifferent_access.deep_merge(attributes[attr_name])
       elsif association.class == HasManyAssociation
         association_instance_array = []
         if association_instance.nil?
@@ -126,7 +126,7 @@ module PlainOldModel
         else
           for i in 0..association_instance.length-1
             instance_hash = create_association_hash(association_instance[i],{})
-            association_instance_array << instance_hash.deep_merge(attributes[attr_name][i])
+            association_instance_array << instance_hash.with_indifferent_access.deep_merge(attributes[attr_name][i])
           end
           merged_result = association_instance_array
         end
@@ -138,9 +138,9 @@ module PlainOldModel
       unless association_instance.nil?
         association_instance.instance_variables.each do |var|
           if association_instance.instance_variable_get(var).instance_variables.length > 0
-            association_instance_hash[var.to_s.delete("@").to_sym] = create_association_hash(association_instance.instance_variable_get(var),{})
+            association_instance_hash[var.to_s.delete("@")] = create_association_hash(association_instance.instance_variable_get(var),{})
           else
-            association_instance_hash[var.to_s.delete("@").to_sym] = association_instance.instance_variable_get(var)
+            association_instance_hash[var.to_s.delete("@")] = association_instance.instance_variable_get(var)
           end
         end
       end
