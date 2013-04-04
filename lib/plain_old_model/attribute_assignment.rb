@@ -138,7 +138,7 @@ module PlainOldModel
       unless association_instance.nil?
         association_instance.instance_variables.each do |var|
           if association_instance.instance_variable_get(var).instance_variables.length > 0
-            association_instance_hash[var.to_s.delete("@")] = create_association_hash(association_instance.instance_variable_get(var),{})
+            association_instance_hash[var.to_s.delete("@")] = create_association_hash(association_instance.instance_variable_get(var),HashWithIndifferentAccess.new)
           else
             association_instance_hash[var.to_s.delete("@")] = association_instance.instance_variable_get(var)
           end
