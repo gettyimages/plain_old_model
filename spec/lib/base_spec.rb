@@ -53,6 +53,13 @@ describe PlainOldModel::Base do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India"}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
         @address.country.class.should == Country
       end
+      it "should create associated class in same module as the parent class" do
+        parent = MyModule::Parent.new({ :child => { :code => 'code', :name => 'name' }})
+        parent.child.should_not be_nil
+        parent.child.class.should == MyModule::Child
+        parent.child.code.should == 'code'
+        parent.child.name.should == 'name'
+      end
       it "should create the nested class instance and assign_attributes to the associated nested class" do
         @address = Address.new({:fname => "first value", :lname => "second value", :country => {:code => "In", :name => "India", :continent => {:name => "asia"}}, :read_test => 'This should not be assigned',:write_test => "this shd be available"})
         @address.country.continent.class.should == Continent
@@ -181,5 +188,15 @@ end
 
 class Continent < PlainOldModel::Base
   attr_accessor :name, :desc
+end
+
+module MyModule
+  class Parent < PlainOldModel::Base
+    has_one :child
+  end
+
+  class Child < PlainOldModel::Base
+    attr_accessor :code, :name
+  end
 end
 

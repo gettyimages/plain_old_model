@@ -4,12 +4,12 @@ module PlainOldModel
   module AttributeAssignment
     module ClassMethods
       def has_one(attr_name, options={})
-        associations << HasOneAssociation.new(attr_name, options)
+        associations << HasOneAssociation.new(attr_name, self, options)
         attr_accessor attr_name
       end
 
       def has_many(attr_name, options={})
-        associations << HasManyAssociation.new(attr_name, options)
+        associations << HasManyAssociation.new(attr_name, self, options)
         attr_accessor attr_name
       end
 
@@ -44,10 +44,11 @@ module PlainOldModel
     end
 
     class Association
-      attr_reader :attr_name
+      attr_reader :attr_name, :host_class
 
-      def initialize(attr_name, options)
+      def initialize(attr_name, host_class, options)
         @attr_name = attr_name
+        @host_class = host_class
         @options = options
       end
 
@@ -61,14 +62,19 @@ module PlainOldModel
 
       def klass
         if @options[:class_name]
-          @options[:class_name].to_s.camelcase.constantize
+          get_class(@options[:class_name])
         else
-          klass_from_attr_name
+          get_class(klass_from_attr_name)
         end
       end
 
       def klass_from_attr_name
-        @attr_name.to_s.camelcase.constantize
+        @attr_name.to_s.camelcase
+      end
+
+      private
+      def get_class(name)
+        @host_class.parent.const_get(name.to_s.camelcase)
       end
     end
 
@@ -82,7 +88,7 @@ module PlainOldModel
       end
 
       def klass_from_attr_name
-        @attr_name.to_s.singularize.camelcase.constantize
+        @attr_name.to_s.singularize.camelcase
       end
     end
 
