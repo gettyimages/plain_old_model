@@ -1,67 +1,47 @@
-# PlainOldModel
+# PlainOldModel #
 
-Implements attribute assignment and basic associations for ActiveModel, and also pulls in:
+Implements nested attribute mass-assignment and has_many and has_one associations, and also pulls in:
 
-ActiveModel::Naming
-ActiveModel::Translation
-ActiveModel::Validations
-ActiveModel::Conversion
+* ActiveModel::Naming
+* ActiveModel::Translation
+* ActiveModel::Validations
+* ActiveModel::Conversion
 
 
-## Installation
+## Installation ##
 
 Add this line to your application's Gemfile:
 
     gem 'plain_old_model'
 
-And then execute:
+## Usage ##
 
-    $ bundle
+    class Person < PlainOldModel::Base
+      attr_accessor :name
+      validates_presence_of :book
+    end
 
-Or install it yourself as:
+    params = {"name" =>"Leo", :book => {:author =>"Tolstoy", :category => "fiction"}}
 
-    $ gem install plain_old_model
+## Initialization ##
 
-## Usage
-Example
-=======
+    p = Person.new(params)
 
-class Person < PlainOldModel::Base
-  attr_accessor :name, :age, :book
-  validates_presence_of :book
-end
-
-params = {"name" =>"Leo", "age" => "25", "book" =>["War and Peace", "Tolstoy"]}
+    p.valid? #true
 
 
-p = Person.new(params)
-  
-p.book  # ["wewrwrwr", "werwrwrr"]
+## Mass Assignment ##
 
-p.valid? #true
+    p.assign_attributes({:name =>"Leo", :age => "25", :book => {:author =>"Tolstoy", :category => "fiction"}})
 
-  OR
-  
-p = Person.new()
+or
 
-p.assign_attributes {:name =>"Leo", :age => "25", :book => {:author =>"Tolstoy", :category => "fiction"}}
-
-=====================================================================
-  p1 = Person.new(params1)
-
-  p1.book # {:author =>"my name", :category => "fiction"}
-
-  p.attributes #[:name, :age, :book, :account_number, :address]
+    p.attributes = {:name =>"Fyodor", :book => {:author =>"Tolstoy", :category => "fiction"}}
 
 
-TODO:
+## Associations ##
 
-- mass assignments
+* has_one 
+* has_many 
 
-## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
