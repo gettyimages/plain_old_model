@@ -11,9 +11,7 @@ module PlainOldModel
       assign_simple_attributes(attributes)
     end
 
-    def attributes=(new_attributes)
-      assign_attributes(new_attributes)
-    end
+    alias attributes= assign_attributes
 
     private
 
