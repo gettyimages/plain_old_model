@@ -1,6 +1,12 @@
 # PlainOldModel
 
-TODO: Write a gem description
+Implements attribute assignment and basic associations for ActiveModel, and also pulls in:
+
+ActiveModel::Naming
+ActiveModel::Translation
+ActiveModel::Validations
+ActiveModel::Conversion
+
 
 ## Installation
 
@@ -20,18 +26,13 @@ Or install it yourself as:
 Example
 =======
 
- class Person < PlainOldModel::Base
-    attr_accessor :name, :age, :book
+class Person < PlainOldModel::Base
+  attr_accessor :name, :age, :book
+  validates_presence_of :book
+end
 
-    attr_reader :account_number
-    attr_writer :address
+params = {"name" =>"Leo", "age" => "25", "book" =>["War and Peace", "Tolstoy"]}
 
-    validates_presence_of :book
- end
-
- params = {"name" =>"testmeparams", "age" => "25", "book" =>["wewrwrwr", "werwrwrr"]}
-
- params1 = {:name =>"testmeparams", :age => "25", :book => {:author =>"my name", :category => "fiction"}}
 
 p = Person.new(params)
   
@@ -43,7 +44,7 @@ p.valid? #true
   
 p = Person.new()
 
-p.assign_attributes(params11)
+p.assign_attributes {:name =>"Leo", :age => "25", :book => {:author =>"Tolstoy", :category => "fiction"}}
 
 =====================================================================
   p1 = Person.new(params1)
@@ -55,9 +56,7 @@ p.assign_attributes(params11)
 
 TODO:
 
-* Association(s)
-* mass assignments
-*
+- mass assignments
 
 ## Contributing
 
