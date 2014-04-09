@@ -13,7 +13,7 @@ Implements nested attribute mass-assignment and has_many and has_one association
 Add this line to your application's Gemfile:
 
 ```ruby
-   gem install plain_old_model
+gem install plain_old_model
 ```
 
 or run
@@ -25,33 +25,33 @@ gem 'plain_old_model'
 
 ### Usage ###
 
-    ```ruby
-    class Person < PlainOldModel::Base
-      attr_accessor :name
-      validates_presence_of :book
-    end
+```ruby
+class Person < PlainOldModel::Base
+  attr_accessor :name
+  validates_presence_of :book
+end
 
-    params = {"name" =>"Leo", :book => {:author =>"Tolstoy", :category => "fiction"}}
+params = {"name" =>"Leo", :book => {:author =>"Tolstoy", :category => "fiction"}}
 
 
-    p = Person.new(params)
+p = Person.new(params)
 
-    p.book 
-    p.valid? #true
-    ```
+p.book 
+p.valid? #true
+```
 
 
 ### Mass Assignment ###
 
-    ```ruby
-    p.assign_attributes({name: "Leo", book: {author: "Tolstoy", category: "fiction"}})
-    ```
+```ruby
+p.assign_attributes({name: "Leo", book: {author: "Tolstoy", category: "fiction"}})
+```
 
 or
 
-    ```ruby
-    p.attributes = {:name =>"Fyodor", :book => {:author =>"Tolstoy", :category => "fiction"}}
-    ```
+```ruby
+p.attributes = {:name =>"Fyodor", :book => {:author =>"Tolstoy", :category => "fiction"}}
+```
 
 
 ### Associations ###
