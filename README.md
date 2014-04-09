@@ -12,15 +12,15 @@ Implements nested attribute mass-assignment and has_many and has_one association
 
 Add this line to your application's Gemfile:
 
-    ```ruby
-    gem install plain_old_model
-    ```
+```ruby
+   gem install plain_old_model
+```
 
 or run
 
-    ```ruby
-    gem 'plain_old_model'
-    ```
+```ruby
+gem 'plain_old_model'
+```
 
 
 ### Usage ###
