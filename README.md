@@ -1,68 +1,62 @@
-# PlainOldModel
+# PlainOldModel #
 
-TODO: Write a gem description
+Implements nested attribute mass-assignment and has_many and has_one associations, and also pulls in:
 
-## Installation
+* ActiveModel::Naming
+* ActiveModel::Translation
+* ActiveModel::Validations
+* ActiveModel::Conversion
+
+
+### Installation ###
 
 Add this line to your application's Gemfile:
 
-    gem 'plain_old_model'
+```ruby
+gem install plain_old_model
+```
 
-And then execute:
+or run
 
-    $ bundle
+```ruby
+gem 'plain_old_model'
+```
 
-Or install it yourself as:
 
-    $ gem install plain_old_model
+### Usage ###
 
-## Usage
-Example
-=======
+```ruby
+class Person < PlainOldModel::Base
+  attr_accessor :name
+  validates_presence_of :book
+end
 
- class Person < PlainOldModel::Base
-    attr_accessor :name, :age, :book
+params = {"name" =>"Leo", :book => {:author =>"Tolstoy", :category => "fiction"}}
 
-    attr_reader :account_number
-    attr_writer :address
-
-    validates_presence_of :book
- end
-
- params = {"name" =>"testmeparams", "age" => "25", "book" =>["wewrwrwr", "werwrwrr"]}
-
- params1 = {:name =>"testmeparams", :age => "25", :book => {:author =>"my name", :category => "fiction"}}
 
 p = Person.new(params)
-  
-p.book  # ["wewrwrwr", "werwrwrr"]
 
+p.book 
 p.valid? #true
-
-  OR
-  
-p = Person.new()
-
-p.assign_attributes(params11)
-
-=====================================================================
-  p1 = Person.new(params1)
-
-  p1.book # {:author =>"my name", :category => "fiction"}
-
-  p.attributes #[:name, :age, :book, :account_number, :address]
+```
 
 
-TODO:
+### Mass Assignment ###
 
-* Association(s)
-* mass assignments
-*
+```ruby
+p.assign_attributes({name: "Leo", book: {author: "Tolstoy", category: "fiction"}})
+```
 
-## Contributing
+or
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+```ruby
+p.attributes = {:name =>"Fyodor", :book => {:author =>"Tolstoy", :category => "fiction"}}
+```
+
+
+### Associations ###
+
+* has_one 
+* has_many 
+
+
