@@ -64,11 +64,20 @@ class Person < PlainOldModel::Base
   has_many :phones
 end
 ```
-or, with an optional factory_method:
+or, with optional factory_method and class_name:
 
 ```ruby
 class Person < PlainOldModel::Base
   has_many :phones, factory_method: :create, class_name: :telephone
+end
+
+class Telephone < PlainOldModel::Base
+  attr_accessor :number, :extension
+
+  def self.create(attributes)
+    attributes[:extension] = '000'
+    new(attributes)
+  end
 end
 ```
 
