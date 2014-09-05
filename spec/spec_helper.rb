@@ -4,6 +4,10 @@
 # loaded once.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+require 'simplecov'
+SimpleCov.start
+
 require 'plain_old_model'
 require 'plain_old_model/base'
 require 'plain_old_model/version'
@@ -20,3 +24,39 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = 'random'
 end
+
+
+class Telephone < PlainOldModel::Base
+  attr_accessor :number, :extension
+
+  def self.create(attributes)
+    attributes[:extension] = 'set_via_factory'
+    new(attributes)
+  end
+end
+
+class Person < PlainOldModel::Base
+  attr_accessor :fname, :lname, :address
+  has_many :addresses
+  has_many :phones, factory_method: :create, class_name: :telephone
+  validates_presence_of :fname
+end
+
+class Address < PlainOldModel::Base
+  attr_accessor :city, :state
+  attr_reader :readable
+  attr_writer :writable
+
+  has_one :country
+end
+
+class Country < PlainOldModel::Base
+  attr_accessor :code, :name
+
+  has_one :continent
+end
+
+class Continent < PlainOldModel::Base
+  attr_accessor :name, :desc
+end
+

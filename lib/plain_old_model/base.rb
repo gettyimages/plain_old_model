@@ -21,5 +21,4 @@ module PlainOldModel
     end
 
   end
-
 end
