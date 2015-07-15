@@ -1,7 +1,4 @@
-require 'active_model/naming'
-require 'active_model/translation'
-require 'active_model/validations'
-require 'active_model/conversion'
+require 'active_model'
 require 'plain_old_model/attribute_assignment'
 
 module PlainOldModel
